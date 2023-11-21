@@ -1,3 +1,64 @@
+void GenerateImage(Tree* tree)
+{
+    assert(tree);
+
+    FILE* dotFile = fopen("grapth.dot", "w");
+    if (dotFile)
+    {
+        fprintf(dotFile, "digraph tree {\n");
+        fprintf(dotFile, "\tnode [shape=Mrecord, style=filled, fillcolor=\"#bba6cd\", color=\"#552d7b\"];\n");
+
+        PrintNodeDump(dotFile, tree->rootTree, "#d5a1a7");
+
+        fprintf(dotFile, "}\n");
+        fclose(dotFile);
+    }
+    else
+    {
+        printf("Ошибка при открытии файла graph.dot\n");
+    }
+}
+
+static void PrintNodeDump(FILE* dotFile, Node* node, const char* fillColor)
+{
+    assert(dotFile);
+    assert(node);
+    assert(fillColor);
+
+    if (node == NULL)
+    {
+        return;
+    }
+
+    if (node->type == INT)
+    {
+        fprintf(dotFile, "%d [shape=record, style=\"filled,rounded\", color=\"#552d7b\",\
+                          fillcolor=\"%s\", fontsize=14, label=\" %d \"];\n",
+                          node, fillColor, node->value);
+    }
+    else if (node->type == OPERAT)
+    {
+        char operation = IssuesOperation(node);
+        fprintf(dotFile, "%d [shape=record, style=\"filled,rounded\", color=\"#552d7b\",\
+                          fillcolor=\"%s\", fontsize=14, label=\" %c \"];\n",
+                          node, fillColor, operation);
+    }
+
+    if (node->left != NULL)
+    {
+        fprintf(dotFile, "\t%d -> %d;\n", node, node->left);
+        PrintNodeDump(dotFile, node->left, "#6495ed");
+    }
+
+    if (node->right != NULL)
+    {
+        fprintf(dotFile, "\t%d -> %d;\n", node, node->right);
+        PrintNodeDump(dotFile, node->right, "#bba6cd");
+    }
+}
+
+//------------------------------------------------------------------------------------------------//
+
 void PrintNodeConsol(Node* node)
 {
     if (node == NULL)
